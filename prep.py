@@ -26,25 +26,32 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
     else:
         my_dict[station][date] = (entries, exits)
 
-pprint(my_dict)
 
-data = {
-    "Stations": [
-        {
-            "StationName": "Alewife",
-            "Traffic":[
-                {"Time": 20140201, "Entries": 3401, "Exits": 230},
-                {"Time": 20140201, "Entries": 3401, "Exits": 230},
-                {"Time": 20140201, "Entries": 3401, "Exits": 230}
-            ]
-        },
-        {
-            "StationName": "Porter",
-            "Traffic":[
-                {"Time": 20140201, "Entries": 3401, "Exits": 230},
-                {"Time": 20140201, "Entries": 3401, "Exits": 230},
-                {"Time": 20140201, "Entries": 3401, "Exits": 230}
-            ]
-        }
-    ]
-}
+with open('data.json', 'wb') as fp:
+    json.dump(my_dict, fp)
+
+
+# pprint(my_dict)
+
+# sort by time instead of station?? 
+
+# data = {
+#     "Stations": [
+#         {
+#             "StationName": "Alewife",
+#             "Traffic":[
+#                 {"Time": 20140201, "Entries": 3401, "Exits": 230},
+#                 {"Time": 20140201, "Entries": 3401, "Exits": 230},
+#                 {"Time": 20140201, "Entries": 3401, "Exits": 230}
+#             ]
+#         },
+#         {
+#             "StationName": "Porter",
+#             "Traffic":[
+#                 {"Time": 20140201, "Entries": 3401, "Exits": 230},
+#                 {"Time": 20140201, "Entries": 3401, "Exits": 230},
+#                 {"Time": 20140201, "Entries": 3401, "Exits": 230}
+#             ]
+#         }
+#     ]
+# }
