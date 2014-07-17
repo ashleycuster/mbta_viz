@@ -33,7 +33,23 @@ with open('data.json', 'wb') as fp:
 
 # pprint(my_dict)
 
-# sort by time instead of station?? 
+# sort by time instead of station??
+new_list = list(defaultdict())
+
+for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinute_2014_02-01--03-02.csv","rb")))[1:]:
+    station = row[0]
+    # date = time.strptime(row[1], "%Y-%m-%d %H:%M:%S")
+    year_str = row[1][0:4]
+    month_str = row[1][5:7]
+    day_str =  row[1][8:10]
+    date = int('{}{}{}'.format(year_str, month_str, year_str))
+    entries = int(row[2])
+    exits = int(row[3])
+    if station not in new_dict:
+        new_list.append({"station": station, "entries":[[date,entries]], "exits":[[date,exits]]})
+    else:
+
+
 
 # data = {
 #     "Stations": [
