@@ -18,7 +18,7 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
     year_str = row[1][0:4]
     month_str = row[1][5:7]
     day_str =  row[1][8:10]
-    date = int('{}{}{}'.format(year_str, month_str, year_str))
+    date = int('{}{}{}'.format(year_str, month_str, day_str))
     entries = int(row[2])
     exits = int(row[3])
     if date in my_dict[station]:
@@ -26,29 +26,46 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
     else:
         my_dict[station][date] = (entries, exits)
 
+# turn dict into a list of dicts?
+# make list of entries paired with times
+# make list of exits paired with times
+new_list = []
 
-with open('data.json', 'wb') as fp:
-    json.dump(my_dict, fp)
+for station in my_dict:
+    entry_list = []
+    exit_list = []
+    for date in my_dict[station]:
+        entry_item = [date, my_dict[station][date][0]]
+        exit_item = [date, my_dict[station][date][1]]
+        entry_list.append(entry_item)
+        exit_list.append(exit_item)
+    new_list.append({'station': station, 'entries': entry_list, 'exits': exit_list})
+
+with open('data_v2.json', 'wb') as fp:
+    # json.dump(my_dict, fp)
+    json.dump(new_list, fp)
 
 
-# pprint(my_dict)
+pprint(my_dict)
 
-# sort by time instead of station??
-new_list = list(defaultdict())
-
-for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinute_2014_02-01--03-02.csv","rb")))[1:]:
-    station = row[0]
-    # date = time.strptime(row[1], "%Y-%m-%d %H:%M:%S")
-    year_str = row[1][0:4]
-    month_str = row[1][5:7]
-    day_str =  row[1][8:10]
-    date = int('{}{}{}'.format(year_str, month_str, year_str))
-    entries = int(row[2])
-    exits = int(row[3])
-    if station not in new_dict:
-        new_list.append({"station": station, "entries":[[date,entries]], "exits":[[date,exits]]})
-    else:
-
+# # sort by time instead of station??
+# new_list = list(defaultdict())
+#
+# for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinute_2014_02-01--03-02.csv","rb")))[1:]:
+#     station = row[0]
+#     # date = time.strptime(row[1], "%Y-%m-%d %H:%M:%S")
+#     year_str = row[1][0:4]
+#     month_str = row[1][5:7]
+#     day_str =  row[1][8:10]
+#     date = int('{}{}{}'.format(year_str, month_str, year_str))
+#     entries = int(row[2])
+#     exits = int(row[3])
+#     # if the station is not yet in the list, add it to the list
+#     if not any(d.get('station', None) == station for d in new_list):
+#         new_list.append({"station": station, "entries":[[date,entries]], "exits":[[date,exits]]})
+#     # else add time/entries/exits to dictionary
+#     else:
+#         new_list
 
 
 # data = {

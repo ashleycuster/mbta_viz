@@ -4,21 +4,9 @@
         <title>MBTA Station Traffic</title>
         <script type="text/javascript" src="script.js">
         </script>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
     </head>
     <body>
         <div></div>
     </body>
 </html>
-
-
-d3.csv("StationCountsByMinute_2014_02-01--03-02.csv", function(d) {
-    return {
-        station: d.Station,
-        datetime: d.Time,
-        entries: d.Entries,
-        exits: d.Exits
-    };
-},  function(error, rows) {
-        console.log(rows);
-    }
-); 
