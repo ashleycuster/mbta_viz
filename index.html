@@ -2,11 +2,347 @@
 <html>
     <head>
         <title>MBTA Station Traffic</title>
-        <script type="text/javascript" src="script.js">
-        </script>
         <script src="http://d3js.org/d3.v3.min.js"></script>
     </head>
     <body>
-        <div></div>
+        <script>
+        var jsonCircles = [
+            {
+                "station": "Alewife",
+                "x_axis": 987,
+                "y_axis": 352,
+                "color": "red"
+            },
+            {
+                "station": "Davis",
+                "x_axis": 1078,
+                "y_axis": 448,
+                "color": "red"
+            },
+            {
+                "station": "Porter",
+                "x_axis": 1173,
+                "y_axis": 538,
+                "color": "red"
+            },
+            {
+                "station": "Harvard",
+                "x_axis": 1265,
+                "y_axis": 632,
+                "color": "red"
+            },
+            {
+                "station": "Central",
+                "x_axis": 1359,
+                "y_axis": 727,
+                "color": "red"
+            },
+            {
+                "station": "Kendall",
+                "x_axis": 1450,
+                "y_axis": 817,
+                "color": "red"
+            },
+            {
+                "station": "Charles/MGH",
+                "x_axis": 1565,
+                "y_axis": 931,
+                "color": "red"
+            },
+            {
+                "station": "Park",
+                "x_axis": 1637,
+                "y_axis": 1006,
+                "color": "red"
+            },
+            {
+                "station": "Downtown Crossing",
+                "x_axis": 1748,
+                "y_axis": 1115,
+                "color": "red"
+            },
+            {
+                "station": "South Station",
+                "x_axis": 1828,
+                "y_axis": 1197,
+                "color": "red"
+            },
+            {
+                "station": "Broadway",
+                "x_axis": 1929,
+                "y_axis": 1394,
+                "color": "red"
+            },
+            {
+                "station": "Andrew",
+                "x_axis": 1930,
+                "y_axis": 1513,
+                "color": "red"
+            },
+            {
+                "station": "JFK/UMass",
+                "x_axis": 1928,
+                "y_axis": 1627,
+                "color": "red"
+            },
+            {
+                "station": "Savin Hill",
+                "x_axis": 1824,
+                "y_axis": 1913,
+                "color": "red"
+            },
+            {
+                "station": "Fields Corner",
+                "x_axis": 1824,
+                "y_axis": 1965,
+                "color": "red"
+            },
+            {
+                "station": "Shawmut",
+                "x_axis": 1824,
+                "y_axis": 2015,
+                "color": "red"
+            },
+            {
+                "station": "Ashmont",
+                "x_axis": 1824,
+                "y_axis": 2065,
+                "color": "red"
+            },
+            {
+                "station": "North Quincy",
+                "x_axis": 2103,
+                "y_axis": 1966,
+                "color": "red"
+            },
+            {
+                "station": "Wollaston",
+                "x_axis": 2175,
+                "y_axis": 2037,
+                "color": "red"
+            },
+            {
+                "station": "Quincy Center",
+                "x_axis": 2248,
+                "y_axis": 2111,
+                "color": "red"
+            },
+            {
+                "station": "Quincy Adams",
+                "x_axis": 2300,
+                "y_axis": 2187,
+                "color": "red"
+            },
+            {
+                "station": "Braintree",
+                "x_axis": 2300,
+                "y_axis": 2297,
+                "color": "red"
+            },
+            {
+                "station": "Bowdoin",
+                "x_axis": 1643,
+                "y_axis": 846,
+                "color": "blue"
+            },
+            {
+                "station": "State",
+                "x_axis": 1800,
+                "y_axis": 991,
+                "color": "blue"
+            },
+            {
+                "station": "Aquarium",
+                "x_axis": 1901,
+                "y_axis": 903,
+                "color": "blue"
+            },
+            {
+                "station": "Maverick",
+                "x_axis": 2053,
+                "y_axis": 754,
+                "color": "blue"
+            },
+            {
+                "station": "Airport",
+                "x_axis": 2106,
+                "y_axis": 698,
+                "color": "blue"
+            },
+            {
+                "station": "Wood Island",
+                "x_axis": 2163,
+                "y_axis": 642,
+                "color": "blue"
+            },
+            {
+                "station": "Orient Heights",
+                "x_axis": 2234,
+                "y_axis": 572,
+                "color": "blue"
+            },
+            {
+                "station": "Suffolk Downs",
+                "x_axis": 2304,
+                "y_axis": 501,
+                "color": "blue"
+            },
+            {
+                "station": "Beachmont",
+                "x_axis": 2373,
+                "y_axis": 432,
+                "color": "blue"
+            },
+            {
+                "station": "Revere Beach",
+                "x_axis": 2441,
+                "y_axis": 364,
+                "color": "blue"
+            },
+            {
+                "station": "Wonderland",
+                "x_axis": 2525,
+                "y_axis": 280,
+                "color": "blue"
+            },
+            {
+                "station": "Oak Grove",
+                "x_axis": 1800,
+                "y_axis":178,
+                "color": "orange"
+            },
+            {
+                "station": "Malden Center",
+                "x_axis": 1800,
+                "y_axis": 250,
+                "color": "orange"
+            },
+            {
+                "station": "Wellington",
+                "x_axis": 1800,
+                "y_axis": 323,
+                "color": "orange"
+            },
+            {
+                "station": "Assembly",
+                "x_axis": 1800,
+                "y_axis": 393,
+                "color": "orange"
+            },
+            {
+                "station": "Sullivan Square",
+                "x_axis": 1800,
+                "y_axis": 466,
+                "color": "orange"
+            },
+            {
+                "station": "Community College",
+                "x_axis": 1800,
+                "y_axis": 536,
+                "color": "orange"
+            },
+            {
+                "station": "North Station",
+                "x_axis": 1800,
+                "y_axis": 710,
+                "color": "orange"
+            },
+            {
+                "station": "Haymarket",
+                "x_axis": 1800,
+                "y_axis": 842,
+                "color": "orange"
+            },
+            {
+                "station": "State",
+                "x_axis": 1800,
+                "y_axis": 991,
+                "color": "orange"
+            },
+            {
+                "station": "Downtown Crossing",
+                "x_axis": 1748,
+                "y_axis": 1114,
+                "color": "orange"
+            },
+            {
+                "station": "Chinatown",
+                "x_axis": 1662,
+                "y_axis": 1198,
+                "color": "orange"
+            },
+            {
+                "station": "Tufts",
+                "x_axis": 1516,
+                "y_axis": 1346,
+                "color": "orange"
+            },
+            {
+                "station": "Back Bay",
+                "x_axis": 1445,
+                "y_axis": 1415,
+                "color": "orange"
+            },
+            {
+                "station": "Mass Ave",
+                "x_axis": 1383,
+                "y_axis": 1478,
+                "color": "orange"
+            },
+            {
+                "station": "Ruggles",
+                "x_axis": 1315,
+                "y_axis": 1545,
+                "color": "orange"
+            },
+            {
+                "station": "Roxbury Crossing",
+                "x_axis": 1249,
+                "y_axis": 1611,
+                "color": "orange"
+            },
+            {
+                "station": "Jackson Sq",
+                "x_axis": 1166,
+                "y_axis": 1695,
+                "color": "orange"
+            },
+            {
+                "station": "Stony Brook",
+                "x_axis": 1082,
+                "y_axis": 1779,
+                "color": "orange"
+            },
+            {
+                "station": "Green St",
+                "x_axis": 999,
+                "y_axis": 1863,
+                "color": "orange"
+            },
+            {
+                "station": "Forest Hills",
+                "x_axis": 914,
+                "y_axis": 1948,
+                "color": "orange"
+            }
+        ];
+
+
+        var svgContainer = d3.select("body").append("svg")
+                                            .attr("width", 3000)
+                                            .attr("height", 3000);
+
+        var circles = svgContainer.selectAll("circle")
+                                    .data(jsonCircles)
+                                    .enter()
+                                    .append("circle");
+
+        var circleAttributes = circles
+                                .attr("cx", function (d) {return d.x_axis})
+                                .attr("cy", function (d) {return d.y_axis})
+                                .attr("r", function (d) {return 20})
+                                .attr("fill", function (d) {return d.color})
+
+        </script>
     </body>
 </html>
