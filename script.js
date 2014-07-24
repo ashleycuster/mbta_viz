@@ -1,187 +1,284 @@
-<script>
 
-// Various accessors that specify the four dimensions of data to visualize.
-function x(d) { return d.income; }
-function y(d) { return d.lifeExpectancy; }
-function radius1(d) { return d.entries; }
-function radius2(d) {return d.exits}
-function key(d) { return d.station; }
 
-// Chart dimensions.
-var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
-    width = 960 - margin.right,
-    height = 500 - margin.top - margin.bottom;
 
-// Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scale.log().domain([300, 1e5]).range([0, width]),
-    yScale = d3.scale.linear().domain([10, 85]).range([height, 0]),
-    radiusScale = d3.scale.sqrt().domain([0, 5e8]).range([0, 40]),
-    colorScale = d3.scale.category10();
-
-// The x & y axes.
-var xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(12, d3.format(",d")),
-    yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-// Create the SVG container and set the origin.
-var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// Add the x-axis.
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-
-// Add the y-axis.
-svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis);
-
-// Add an x-axis label.
-svg.append("text")
-    .attr("class", "x label")
-    .attr("text-anchor", "end")
-    .attr("x", width)
-    .attr("y", height - 6)
-    .text("temporary x-axis");
-
-// Add a y-axis label.
-svg.append("text")
-    .attr("class", "y label")
-    .attr("text-anchor", "end")
-    .attr("y", 6)
-    .attr("dy", ".75em")
-    .attr("transform", "rotate(-90)")
-    .text("temporary y-axis");
-
-// Add the year label; the value is set on transition.
-var label = svg.append("text")
-    .attr("class", "year label")
-    .attr("text-anchor", "end")
-    .attr("y", height - 24)
-    .attr("x", width)
-    .text(1800);
-
-// Load the data.
-d3.json("data_v2.json", function(nations) {
-
-  // A bisector since many nation's data is sparsely-defined.
-  var bisect = d3.bisector(function(d) { return d[0]; });
-
-  // Add a dot per nation. Initialize the data at 1800, and set the colors.
-  var dot = svg.append("g")
-      .attr("class", "dots")
-    .selectAll(".dot")
-      .data(interpolateData(1800))
-    .enter().append("circle")
-      .attr("class", "dot")
-      .style("fill", function(d) { return colorScale(color(d)); })
-      .call(position)
-      .sort(order);
-
-  // Add a title.
-  dot.append("title")
-      .text(function(d) { return d.name; });
-
-  // Add an overlay for the year label.
-  var box = label.node().getBBox();
-
-  var overlay = svg.append("rect")
-        .attr("class", "overlay")
-        .attr("x", box.x)
-        .attr("y", box.y)
-        .attr("width", box.width)
-        .attr("height", box.height)
-        .on("mouseover", enableInteraction);
-
-  // Start a transition that interpolates the data based on year.
-  svg.transition()
-      .duration(30000)
-      .ease("linear")
-      .tween("year", tweenYear)
-      .each("end", enableInteraction);
-
-  // Positions the dots based on data.
-  function position(dot) {
-    dot .attr("cx", function(d) { return xScale(x(d)); })
-        .attr("cy", function(d) { return yScale(y(d)); })
-        .attr("r", function(d) { return radiusScale(radius(d)); });
-  }
-
-  // Defines a sort order so that the smallest dots are drawn on top.
-  function order(a, b) {
-    return radius(b) - radius(a);
-  }
-
-  // After the transition finishes, you can mouseover to change the year.
-  function enableInteraction() {
-    var yearScale = d3.scale.linear()
-        .domain([1800, 2009])
-        .range([box.x + 10, box.x + box.width - 10])
-        .clamp(true);
-
-    // Cancel the current transition, if any.
-    svg.transition().duration(0);
-
-    overlay
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout)
-        .on("mousemove", mousemove)
-        .on("touchmove", mousemove);
-
-    function mouseover() {
-      label.classed("active", true);
+var jsonCircles = [
+    {
+        "station": "Alewife",
+        "x_axis": 987,
+        "y_axis": 352
+    },
+    {
+        "station": "Davis",
+        "x_axis": 1078,
+        "y_axis": 448
+    },
+    {
+        "station": "Porter",
+        "x_axis": 1173,
+        "y_axis": 538
+    },
+    {
+        "station": "Harvard",
+        "x_axis": 1265,
+        "y_axis": 632
+    },
+    {
+        "station": "Central",
+        "x_axis": 1359,
+        "y_axis": 727
+    },
+    {
+        "station": "Kendall",
+        "x_axis": 1450,
+        "y_axis": 817
+    },
+    {
+        "station": "Charles/MGH",
+        "x_axis": 1565,
+        "y_axis": 931
+    },
+    {
+        "station": "Park",
+        "x_axis": 1637,
+        "y_axis": 1006
+    },
+    {
+        "station": "Downtown Crossing",
+        "x_axis": 1748,
+        "y_axis": 1115
+    },
+    {
+        "station": "South Station",
+        "x_axis": 1828,
+        "y_axis": 1197
+    },
+    {
+        "station": "Broadway",
+        "x_axis": 1929,
+        "y_axis": 1394
+    },
+    {
+        "station": "Andrew",
+        "x_axis": 1930,
+        "y_axis": 1513
+    },
+    {
+        "station": "JFK/UMass",
+        "x_axis": 1928,
+        "y_axis": 1627
     }
-
-    function mouseout() {
-      label.classed("active", false);
+    {
+        "station": "Savin Hill",
+        "x_axis": 1824,
+        "y_axis": 1913
+    },
+    {
+        "station": "Fields Corner",
+        "x_axis": 1824,
+        "y_axis": 1965
+    },
+    {
+        "station": "Shawmut",
+        "x_axis": 1824,
+        "y_axis": 2015
+    },
+    {
+        "station": "Ashmont",
+        "x_axis": 1824,
+        "y_axis": 2065
+    },
+    {
+        "station": "North Quincy",
+        "x_axis": 2103,
+        "y_axis": 1966
+    },
+    {
+        "station": "Wollaston",
+        "x_axis": 2175,
+        "y_axis": 2037
+    },
+    {
+        "station": "Quincy Center",
+        "x_axis": 2248,
+        "y_axis": 2111
+    },
+    {
+        "station": "Quincy Adams",
+        "x_axis": 2300,
+        "y_axis": 2187
+    },
+    {
+        "station": "Braintree",
+        "x_axis": 2300,
+        "y_axis": 2297
+    },
+    {
+        "station": "Bowdoin",
+        "x_axis": 1643,
+        "y_axis": 846
+    },
+    {
+        "station": "State",
+        "x_axis": 1800,
+        "y_axis": 991
+    },
+    {
+        "station": "Aquarium",
+        "x_axis": 1901,
+        "y_axis": 903
+    },
+    {
+        "station": "Maverick",
+        "x_axis": 2053,
+        "y_axis": 754
+    },
+    {
+        "station": "Airport",
+        "x_axis": 2106,
+        "y_axis": 698
+    },
+    {
+        "station": "Wood Island",
+        "x_axis": 2163,
+        "y_axis": 642
+    },
+    {
+        "station": "Orient Heights",
+        "x_axis": 2234,
+        "y_axis": 572
+    },
+    {
+        "station": "Suffolk Downs",
+        "x_axis": 2304,
+        "y_axis": 501
+    },
+    {
+        "station": "Beachmont",
+        "x_axis": 2373,
+        "y_axis": 432
+    },
+    {
+        "station": "Revere Beach",
+        "x_axis": 2441,
+        "y_axis": 364
+    },
+    {
+        "station": "Wonderland",
+        "x_axis": 2525,
+        "y_axis": 280
+    },
+    {
+        "station": "Oak Grove",
+        "x_axis": 1800,
+        "y_axis":178
+    },
+    {
+        "station": "Malden Center",
+        "x_axis": 1800,
+        "y_axis": 250
+    },
+    {
+        "station": "Wellington",
+        "x_axis": 1800,
+        "y_axis": 323
+    },
+    {
+        "station": "Assembly",
+        "x_axis": 1800,
+        "y_axis": 393
+    },
+    {
+        "station": "Sullivan Square",
+        "x_axis": 1800,
+        "y_axis": 466
+    },
+    {
+        "station": "Community College",
+        "x_axis": 1800,
+        "y_axis": 536
+    },
+    {
+        "station": "North Station",
+        "x_axis": 1800,
+        "y_axis": 710
+    },
+    {
+        "station": "Haymarket",
+        "x_axis": 1800,
+        "y_axis": 842
+    },
+    {
+        "station": "State",
+        "x_axis": 1800,
+        "y_axis": 991
+    },
+    {
+        "station": "Downtown Crossing",
+        "x_axis": 1748,
+        "y_axis": 1114
+    },
+    {
+        "station": "Chinatown",
+        "x_axis": 1662,
+        "y_axis": 1198
+    },
+    {
+        "station": "Tufts",
+        "x_axis": 1516,
+        "y_axis": 1346
+    },
+    {
+        "station": "Back Bay",
+        "x_axis": 1445,
+        "y_axis": 1415
+    },
+    {
+        "station": "Mass Ave",
+        "x_axis": 1383,
+        "y_axis": 1478
+    },
+    {
+        "station": "Ruggles",
+        "x_axis": 1315,
+        "y_axis": 1545
+    },
+    {
+        "station": "Roxbury Crossing",
+        "x_axis": 1249,
+        "y_axis": 1611
+    },
+    {
+        "station": "Jackson Sq",
+        "x_axis": 1166,
+        "y_axis": 1695
+    },
+    {
+        "station": "Stony Brook",
+        "x_axis": 1082,
+        "y_axis": 1779
+    },
+    {
+        "station": "Green St",
+        "x_axis": 999,
+        "y_axis": 1863
+    },
+    {
+        "station": "Forest Hills",
+        "x_axis": 914,
+        "y_axis": 1948
     }
+];
 
-    function mousemove() {
-      displayYear(yearScale.invert(d3.mouse(this)[0]));
-    }
-  }
 
-  // Tweens the entire chart by first tweening the year, and then the data.
-  // For the interpolated data, the dots and label are redrawn.
-  function tweenYear() {
-    var year = d3.interpolateNumber(1800, 2009);
-    return function(t) { displayYear(year(t)); };
-  }
+var svgContainer = d3.select("body").append("svg")
+                                    .attr("width", 3000)
+                                    .attr("height", 3000);
 
-  // Updates the display to show the specified year.
-  function displayYear(year) {
-    dot.data(interpolateData(year), key).call(position).sort(order);
-    label.text(Math.round(year));
-  }
+var circles - svgContainer.selectAll("circle")
+                            .data(jsonCircles)
+                            .enter()
+                            .append("circle");
 
-  // Interpolates the dataset for the given (fractional) year.
-  function interpolateData(year) {
-    return nations.map(function(d) {
-      return {
-        name: d.name,
-        region: d.region,
-        income: interpolateValues(d.income, year),
-        population: interpolateValues(d.population, year),
-        lifeExpectancy: interpolateValues(d.lifeExpectancy, year)
-      };
-    });
-  }
-
-  // Finds (and possibly interpolates) the value for the specified year.
-  function interpolateValues(values, year) {
-    var i = bisect.left(values, year, 0, values.length - 1),
-        a = values[i];
-    if (i > 0) {
-      var b = values[i - 1],
-          t = (year - a[0]) / (b[0] - a[0]);
-      return a[1] * (1 - t) + b[1] * t;
-    }
-    return a[1];
-  }
-});
-
-</script>
+var circleAttributes = circles
+                        .attr("cx", function (d) {return d.x_axis})
+                        .attr("cy", function (d) {return d.y_axis}); 
