@@ -334,36 +334,52 @@
                                             .attr("width", 3000)
                                             .attr("height", 3000);
 
-        var exitArcs = d3.svg.arc()
-                                .innerRadius(5)
-                                .outerRadius(20)
-                                .startAngle(0)
-                                .endAngle(pi);
+        var arcD = [{"radiusIn": 5, "radiusOut": 20, "angleStart": 0, "angleEnd": pi, "color": "red"},
+                        {"radiusIn": 5, "radiusOut": 20, "angleStart": pi, "angleEnd": 2*pi, "color": "green"}];
 
-        var entryArcs = d3.svg.arc()
-                                .innerRadius(5)
-                                .outerRadius(20)
-                                .startAngle(pi)
-                                .endAngle(2 * pi);
+        var arcF = d3.svg.arc()
+                                .innerRadius(function (d) {return d.radiusIn;})
+                                .outerRadius(function (d) {return d.radiusOut;})
+                                .startAngle(function (d) {return d.angleStart;})
+                                .endAngle(function (d) {return d.angleEnd;});
+                                // .attr("fill", function (d) {return d.color});
 
-        var exitPaths = svgContainer.selectAll("path")
+
+        // var exitArcs = d3.svg.arc()
+        //                         .innerRadius(5)
+        //                         .outerRadius(20)
+        //                         .startAngle(0)
+        //                         .endAngle(pi);
+        //
+        // var entryArcs = d3.svg.arc()
+        //                         .innerRadius(5)
+        //                         .outerRadius(20)
+        //                         .startAngle(pi)
+        //                         .endAngle(2 * pi);
+
+        // var arcData = [{"arc": exitArcs}, {"arc": entryArcs}];
+        // var arcFunction = function (d) {return d.arc;};
+
+        var arcPaths = svgContainer.selectAll("path")
                                     .data(jsonCircles)
                                     .enter()
                                     .append("path")
                                     .attr("transform", function (d) {return "translate(" + d.x_axis + "," + d.y_axis + ")";})
-                                    .attr("d", exitArcs)
-                                    .attr("fill", "red"); 
-
-        exitPaths.enter().append("path")
-                                    .attr("transform", function (d) {return "translate(" + d.x_axis + "," + d.y_axis + ")";})
-                                    .attr("d", entryArcs)
+                                    // .attr("d",  function (arcData) {return arcData.arc})
+                                    .attr("d", arcF(arcD))
                                     .attr("fill", "green");
+
+        // exitPaths.append("path")
+        //                             .attr("transform", function (d) {return "translate(" + d.x_axis + "," + d.y_axis + ")";})
+        //                             .attr("d", exitArcs)
+        //                             .attr("fill", "green");
 
         // var entryPaths = svgContainer.selectAll("path")
         //                             .data(jsonCircles)
         //                             .enter()
         //                             .append("path")
         //                             .attr("transform", function (d) {return "translate(" + d.x_axis + "," + d.y_axis + ")";})
+        //                             .attr("d", exitArcs)
         //                             .attr("d", entryArcs)
         //                             .attr("fill", "green");
 
