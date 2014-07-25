@@ -450,17 +450,24 @@
                                 .outerRadius(function (d) {return d.traffic[0].people;})
                                 .startAngle(function (d) {return d.traffic[0].startAngle;})
                                 .endAngle(function (d) {return d.traffic[0].endAngle;});
+        // ok so there's probably a better way to do this with a forEach or something
+        // but we create an arc for each side
+        var arcPath2 = d3.svg.arc()
+                                .innerRadius(2)
+                                .outerRadius(function (d) {return d.traffic[1].people;})
+                                .startAngle(function (d) {return d.traffic[1].startAngle;})
+                                .endAngle(function (d) {return d.traffic[1].endAngle;});
 
-
-        var arcPaths = svgContainer.selectAll("path")
+        // instead of appending path elements we append <g> each one moved to the x/y offset 
+        var arcGroups = svgContainer.selectAll("path")
                                     .data(jsonCircles)
                                     .enter()
-                                    .append("path")
-                                    .attr("transform", function (d) {return "translate(" + d.x_axis + "," + d.y_axis + ")";})
-                                    // .attr("d",  function (arcData) {return arcData.arc})
-                                    .attr("d", arcPath)
-                                    .attr("fill", function (d) {return d.color});
+                                    .append("g")
+                                    .attr("transform", function (d) {return "translate(" + d.x_axis + "," + d.y_axis + ")";});
 
+        // and to each group we append the left & right arc
+        arcGroups.append("path").attr("d", arcPath).attr("fill", function (d) {return d.color});
+        arcGroups.append("path").attr("d", arcPath2).attr("fill", function (d) {return d.color});
 
 
         </script>
