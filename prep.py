@@ -107,8 +107,8 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
 #     # json.dump(my_dict, fp)
 #     json.dump(new_list, fp)
 
-for key in my_dict.keys():
-    print(key)
+# for key in my_dict.keys():
+#     print(key)
 # pprint(my_dict)
 
 pi = math.pi
@@ -543,12 +543,9 @@ jsonCircles = [
 for item in jsonCircles:
     station = item['station']
     index = map(itemgetter('station'), jsonCircles).index(station)
-    print(jsonCircles[index]['traffic'][0]['people'])
-    print(station)
     if 20140201 in my_dict[station]:
-        print(my_dict[station][20140201])
-    # jsonCircles[index]['traffic'][0]['people'] = my_dict[station][20140201][0]
-    # jsonCircles[index]['traffic'][1]['people'] = my_dict[station][20140201][1]
+        jsonCircles[index]['traffic'][0]['people'] = my_dict[station][20140201][0]
+        jsonCircles[index]['traffic'][1]['people'] = my_dict[station][20140201][1]
 
 with open('feb1.json', 'wb') as fp:
     json.dump(jsonCircles, fp)
