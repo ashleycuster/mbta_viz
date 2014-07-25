@@ -128,7 +128,7 @@
             {
                 "station": "Fields Corner",
                 "x_axis": 1824,
-                "y_axis": 1965,
+                "y_axis": 1995,
                 "color": "red",
                 "traffic": [{"startAngle": 0, "endAngle": pi, "people":20},
                     {"startAngle": pi, "endAngle": 2*pi, "people":10}]
@@ -136,7 +136,7 @@
             {
                 "station": "Shawmut",
                 "x_axis": 1824,
-                "y_axis": 2015,
+                "y_axis": 2075,
                 "color": "red",
                 "traffic": [{"startAngle": 0, "endAngle": pi, "people":20},
                     {"startAngle": pi, "endAngle": 2*pi, "people":10}]
@@ -144,7 +144,7 @@
             {
                 "station": "Ashmont",
                 "x_axis": 1824,
-                "y_axis": 2065,
+                "y_axis": 2155,
                 "color": "red",
                 "traffic": [{"startAngle": 0, "endAngle": pi, "people":20},
                     {"startAngle": pi, "endAngle": 2*pi, "people":10}]
@@ -458,7 +458,7 @@
                                 .startAngle(function (d) {return d.traffic[1].startAngle;})
                                 .endAngle(function (d) {return d.traffic[1].endAngle;});
 
-        // instead of appending path elements we append <g> each one moved to the x/y offset 
+        // instead of appending path elements we append <g> each one moved to the x/y offset
         var arcGroups = svgContainer.selectAll("path")
                                     .data(jsonCircles)
                                     .enter()
