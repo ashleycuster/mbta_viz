@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MBTA Station Traffic</title>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+    </head>
+    <body>
+        <h1>February 1, 2014 Entry and Exit Data</h1>
+        <script>
+
+        var pi = Math.PI;
+
+        var stationMap = {"Alewife": {"y_axis": 352, "x_axis": 987, "color": "red"},
+                            "Davis Square": {"y_axis": 448, "x_axis": 1078, "color": "red"},
+                            "Porter Square": {"y_axis": 538, "x_axis": 1173, "color": "red"},
+                            "Harvard": {"y_axis": 632, "x_axis": 1265, "color": "red"},
+                            "Central Square": {"y_axis": 727, "x_axis": 1359, "color": "red"},
+                            "Kendall Square": {"y_axis": 817, "x_axis": 1450, "color": "red"},
+                            "Charles MGH": {"y_axis": 931, "x_axis": 1565, "color": "red"},
+                            "Park Street": {"y_axis": 1006, "x_axis": 1637, "color": "red"},
+                            "Downtown Crossing": {"y_axis": 1115, "x_axis": 1748, "color": "red"},
+                            "South Station": {"y_axis": 1197, "x_axis": 1828, "color": "red"},
+                            "Broadway": {"y_axis": 1394, "x_axis": 1929, "color": "red"},
+                            "Andrew Square": {"y_axis": 1513, "x_axis": 1930, "color": "red"},
+                            "JFK/U Mass": {"y_axis": 1627, "x_axis": 1928, "color": "red"},
+                            "Savin Hill": {"y_axis": 1713, "x_axis": 1824, "color": "red"},
+                            "Fields Corner": {"y_axis": 1795, "x_axis": 1824, "color": "red"},
+                            "Shawmut": {"y_axis": 1875, "x_axis": 1824, "color": "red"},
+                            "Ashmont": {"y_axis": 1955, "x_axis": 1824, "color": "red"},
+                            "North Quincy": {"y_axis": 1766, "x_axis": 2103, "color": "red"},
+                            "Wollaston": {"y_axis": 1837, "x_axis": 2175, "color": "red"},
+                            "Quincy Center": {"y_axis": 1911, "x_axis": 2248, "color": "red"},
+                            "Quincy Adams": {"y_axis": 1987, "x_axis": 2300, "color": "red"},
+                            "Braintree": {"y_axis": 2097, "x_axis": 2300, "color": "red"},
+                            "Bowdoin": {"y_axis": 846, "x_axis": 1643, "color": "blue"},
+                            "Government Center": {"y_axis": 922, "x_axis": 1717, "color": "blue"},
+                            "State Street": {"y_axis": 991, "x_axis": 1800, "color": "blue"},
+                            "Aquarium": {"y_axis": 903, "x_axis": 1901, "color": "blue"},
+                            "Maverick": {"y_axis": 754, "x_axis": 2053, "color": "blue"},
+                            "Airport": {"y_axis": 698, "x_axis": 2106, "color": "blue"},
+                            "Wood Island": {"y_axis": 642, "x_axis": 2163, "color": "blue"},
+                            "Orient Heights": {"y_axis": 572, "x_axis": 2234, "color": "blue"},
+                            "Suffolk Downs": {"y_axis": 501, "x_axis": 2304, "color": "blue"},
+                            "Beachmont": {"y_axis": 432, "x_axis": 2373, "color": "blue"},
+                            "Revere Beach": {"y_axis": 364, "x_axis": 2441, "color": "blue"},
+                            "Wonderland": {"y_axis": 280, "x_axis": 2525, "color": "blue"},
+                            "Oak Grove": {"y_axis": 178, "x_axis": 1800, "color": "orange"},
+                            "Malden Center": {"y_axis": 252, "x_axis": 1800, "color": "orange"},
+                            "Wellington": {"y_axis": 321, "x_axis": 1800, "color": "orange"},
+                            "Sullivan Square": {"y_axis": 466, "x_axis": 1800, "color": "orange"},
+                            "Community College": {"y_axis": 536, "x_axis": 1800, "color": "orange"},
+                            "North Station": {"y_axis": 710, "x_axis": 1800, "color": "orange"},
+                            "Haymarket": {"y_axis": 842, "x_axis": 1800, "color": "orange"},
+                            "State Street": {"y_axis": 991, "x_axis": 1800, "color": "orange"},
+                            "Downtown Crossing": {"y_axis": 1114, "x_axis": 1748, "color": "orange"},
+                            "Chinatown": {"y_axis": 1198, "x_axis": 1662, "color": "orange"},
+                            "Tufts Medical Center": {"y_axis": 1346, "x_axis": 1516, "color": "orange"},
+                            "Back Bay": {"y_axis": 1415, "x_axis": 1445, "color": "orange"},
+                            "Mass Ave": {"y_axis": 1478, "x_axis": 1383, "color": "orange"},
+                            "Ruggles": {"y_axis": 1545, "x_axis": 1315, "color": "orange"},
+                            "Roxbury Crossing": {"y_axis": 1611, "x_axis": 1249, "color": "orange"},
+                            "Jackson Square": {"y_axis": 1695, "x_axis": 1166, "color": "orange"},
+                            "Stony Brook": {"y_axis": 1779, "x_axis": 1082, "color": "orange"},
+                            "Green Street": {"y_axis": 1863, "x_axis": 999, "color": "orange"},
+                            "Forest Hills": {"y_axis": 1948, "x_axis": 914, "color": "orange"},
+                            "Courthouse": {"y_axis": 1197, "x_axis": 1961, "color": "silver"},
+                            "World Trade Center": {"y_axis": 1197, "x_axis": 2004, "color": "silver"}
+                        };
+
+
+        var svgContainer = d3.select("body").append("svg")
+                                            .attr("width", 3000)
+                                            .attr("height", 3000);
+
+
+
+        d3.json("hourly.json", function(traffic) {
+
+            var bisect = d3.bisector(function(d) { return d[0]; });
+
+            var arcPath = d3.svg.arc()
+                                    .innerRadius(2)
+                                    .outerRadius(function (d) {return (d.num_people)/200;})
+                                    .startAngle(function (d) {if (d.direction === 'entry') {return pi;} else {return 0;}})
+                                    .endAngle(function (d) {if (d.direction === 'entry') {return 2*pi;} else {return pi;}});
+
+            // instead of appending path elements we append <g> each one moved to the x/y offset
+            var arcGroups = svgContainer.selectAll("path")
+                                        .data(traffic)
+                                        .enter()
+                                        .append("g")
+                                        .attr("transform", function (d) {var station_in = d.station;
+                                                                            if (station_in in stationMap)
+                                                                                {var x_axis = stationMap[station_in]['x_axis'];
+                                                                                var y_axis = stationMap[station_in]['y_axis'];
+                                                                                return "translate(" + x_axis + "," + y_axis + ")";}
+                                                                            else {console.log(station_in)}
+                                                                        });
+
+
+            // and to each group we append the left & right arc
+            arcGroups.append("path").attr("d", arcPath).attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
+            // show station names with mouseover
+            arcGroups.append("svg:title").text(function (d) { return d.station; });
+        } )
+
+
+        </script>
+    </body>
+</html>
