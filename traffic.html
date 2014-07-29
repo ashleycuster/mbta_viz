@@ -5,10 +5,13 @@
         <script src="http://d3js.org/d3.v3.min.js"></script>
     </head>
     <body>
-        <h1>February 1, 2014 Entry and Exit Data</h1>
+        <h1>One Hour of Entry and Exit Data</h1>
+        <script type="text/javascript" src="/Users/ashleycuster/Desktop/mbta_viz/traffic.js"></script>
         <script>
 
         var pi = Math.PI;
+
+        var traffic_data = trafficData;
 
         var stationMap = {"Alewife": {"y_axis": 352, "x_axis": 987, "color": "red"},
                             "Davis Square": {"y_axis": 448, "x_axis": 1078, "color": "red"},
@@ -74,35 +77,31 @@
 
 
 
-        d3.json("hourly.json", function(traffic) {
 
-            var bisect = d3.bisector(function(d) { return d[0]; });
+        var arcPath = d3.svg.arc()
+                                .innerRadius(2)
+                                .outerRadius(function (d) {return (d.num_people[0][1])/200;})
+                                .startAngle(function (d) {if (d.direction === 'entry') {return pi;} else {return 0;}})
+                                .endAngle(function (d) {if (d.direction === 'entry') {return 2*pi;} else {return pi;}});
 
-            var arcPath = d3.svg.arc()
-                                    .innerRadius(2)
-                                    .outerRadius(function (d) {return (d.num_people)/200;})
-                                    .startAngle(function (d) {if (d.direction === 'entry') {return pi;} else {return 0;}})
-                                    .endAngle(function (d) {if (d.direction === 'entry') {return 2*pi;} else {return pi;}});
-
-            // instead of appending path elements we append <g> each one moved to the x/y offset
-            var arcGroups = svgContainer.selectAll("path")
-                                        .data(traffic)
-                                        .enter()
-                                        .append("g")
-                                        .attr("transform", function (d) {var station_in = d.station;
-                                                                            if (station_in in stationMap)
-                                                                                {var x_axis = stationMap[station_in]['x_axis'];
-                                                                                var y_axis = stationMap[station_in]['y_axis'];
-                                                                                return "translate(" + x_axis + "," + y_axis + ")";}
-                                                                            else {console.log(station_in)}
-                                                                        });
+        // instead of appending path elements we append <g> each one moved to the x/y offset
+        var arcGroups = svgContainer.selectAll("path")
+                                    .data(traffic_data)
+                                    .enter()
+                                    .append("g")
+                                    .attr("transform", function (d) {var station_in = d.station;
+                                                                        if (station_in in stationMap)
+                                                                            {var x_axis = stationMap[station_in]['x_axis'];
+                                                                            var y_axis = stationMap[station_in]['y_axis'];
+                                                                            return "translate(" + x_axis + "," + y_axis + ")";}
+                                                                        else {console.log(station_in)}
+                                                                    });
 
 
-            // and to each group we append the left & right arc
-            arcGroups.append("path").attr("d", arcPath).attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
-            // show station names with mouseover
-            arcGroups.append("svg:title").text(function (d) { return d.station; });
-        } )
+        // and to each group we append the left & right arc
+        arcGroups.append("path").attr("d", arcPath).attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
+        // show station names with mouseover
+        arcGroups.append("svg:title").text(function (d) { return d.station; });
 
 
         </script>

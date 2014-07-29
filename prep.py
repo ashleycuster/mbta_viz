@@ -19,7 +19,8 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
     year_str = row[1][0:4]
     month_str = row[1][5:7]
     day_str =  row[1][8:10]
-    date = int('{}{}{}'.format(year_str, month_str, day_str))
+    hour_str = row[1][11:13]
+    date = int('{}{}{}{}'.format(year_str, month_str, day_str, hour_str))
     entries = int(row[2])
     exits = int(row[3])
     if date in my_dict[station]:
@@ -29,17 +30,23 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
 
 jsonData = list(defaultdict())
 
-# for item in jsonCircles:
-#     station = item['station']
-#     index = map(itemgetter('station'), jsonCircles).index(station)
-#     if 20140201 in my_dict[station]:
-#         jsonCircles[index]['traffic'][0]['people'] = my_dict[station][20140201][0]
-#         jsonCircles[index]['traffic'][1]['people'] = my_dict[station][20140201][1]
+# for station in my_dict:
+#     jsonData.append({'station': station, 'direction': 'entry', 'num_people': my_dict[station][20140201][0]})
+#     jsonData.append({'station': station, 'direction': 'exit', 'num_people': my_dict[station][20140201][1]})
+#
+# with open('feb1.json', 'wb') as fp:
+#     json.dump(jsonData, fp)
 
+# num_people = [[time, num_people], [time, num_people], ...]
+num_entries = []
+num_exits = []
 
 for station in my_dict:
-    jsonData.append({'station': station, 'direction': 'entry', 'num_people': my_dict[station][20140201][0]})
-    jsonData.append({'station': station, 'direction': 'exit', 'num_people': my_dict[station][20140201][1]})
+    for time in my_dict[station]:
+        num_entries.append([ time, my_dict[station][time][0] ])
+        num_exits.append([ time, my_dict[station][time][1] ])
+    jsonData.append({'station': station, 'direction': 'entry', 'num_people': num_entries})
+    jsonData.append({'station': station, 'direction': 'exit', 'num_people': num_exits})
 
-with open('feb1.json', 'wb') as fp:
+with open('hourly.json', 'wb') as fp:
     json.dump(jsonData, fp)

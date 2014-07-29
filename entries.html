@@ -221,8 +221,8 @@
 
         // and to each group we append the left & right arc
         arcGroups.append("path").attr("d", arcPath).attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
-
-        arcGroups.append("svg:title").text(function (d) { return d.station; }); 
+        // show station names with mouseover
+        arcGroups.append("svg:title").text(function (d) { return d.station; });
 
         </script>
     </body>
