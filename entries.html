@@ -210,11 +210,19 @@
                                     .data(stationTraffic)
                                     .enter()
                                     .append("g")
-                                    .attr("transform", function (d) {var station_in = d.station; if (station_in in stationMap) {var x_axis = stationMap[station_in]['x_axis']; var y_axis = stationMap[station_in]['y_axis']; return "translate(" + x_axis + "," + y_axis + ")";} else {console.log(station_in)}});
+                                    .attr("transform", function (d) {var station_in = d.station;
+                                                                        if (station_in in stationMap)
+                                                                            {var x_axis = stationMap[station_in]['x_axis'];
+                                                                            var y_axis = stationMap[station_in]['y_axis'];
+                                                                            return "translate(" + x_axis + "," + y_axis + ")";}
+                                                                        else {console.log(station_in)}
+                                                                    });
+
 
         // and to each group we append the left & right arc
         arcGroups.append("path").attr("d", arcPath).attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
 
+        arcGroups.append("svg:title").text(function (d) { return d.station; }); 
 
         </script>
     </body>
