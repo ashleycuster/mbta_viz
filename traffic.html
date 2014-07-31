@@ -6,12 +6,12 @@
     </head>
     <body>
         <h1>One Hour of Entry and Exit Data</h1>
-        <script type="text/javascript" src="/Users/ashleycuster/Desktop/mbta_viz/traffic.js"></script>
+        <script type="text/javascript" src="/Users/ashleycuster/Desktop/mbta_viz/allfeb_hourly.js"></script>
         <script>
 
         var pi = Math.PI;
 
-        var traffic_data = trafficData;
+        // var traffic_data = trafficData;
 
         var stationMap = {"Alewife": {"y_axis": 352, "x_axis": 987, "color": "red"},
                             "Davis Square": {"y_axis": 448, "x_axis": 1078, "color": "red"},
@@ -76,17 +76,17 @@
                                             .attr("height", 3000);
 
 
-
+        var bisect = d3.bisector(function(d) {return d[0];});
 
         var arcPath = d3.svg.arc()
                                 .innerRadius(2)
-                                .outerRadius(function (d) {return (d.num_people[0][1])/200;})
+                                .outerRadius(function (d) {return (d.num_people)/15;})
                                 .startAngle(function (d) {if (d.direction === 'entry') {return pi;} else {return 0;}})
                                 .endAngle(function (d) {if (d.direction === 'entry') {return 2*pi;} else {return pi;}});
 
         // instead of appending path elements we append <g> each one moved to the x/y offset
         var arcGroups = svgContainer.selectAll("path")
-                                    .data(traffic_data)
+                                    .data(getData(2014020104))
                                     .enter()
                                     .append("g")
                                     .attr("transform", function (d) {var station_in = d.station;
@@ -95,14 +95,47 @@
                                                                             var y_axis = stationMap[station_in]['y_axis'];
                                                                             return "translate(" + x_axis + "," + y_axis + ")";}
                                                                         else {console.log(station_in)}
-                                                                    });
+                                                                    })
+                                    .attr("id", "arcID");
 
 
         // and to each group we append the left & right arc
         arcGroups.append("path").attr("d", arcPath).attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
+
         // show station names with mouseover
         arcGroups.append("svg:title").text(function (d) { return d.station; });
 
+
+        svgContainer.transition()
+                    .duration(3000)
+                    .ease("linear")
+                    .tween("date", tweenDate);
+
+        function getData(date) {
+            return traffic_data.map(function(d) {
+                return {
+                    station: d.station,
+                    direction: d.direction,
+                    num_people: getPeople(d.num_people, date)
+                };
+            });
+        }
+
+        function getPeople(values, date) {
+            var i = bisect.left(values, date, 0, values.length - 1),
+                a = values[i];
+            return a[1];
+        }
+
+        function tweenDate() {
+            var date = d3.interpolateNumber(2014020104, 2014020123);
+            return function (t) { displayDate(date(t)); };
+        }
+
+        function displayDate(date) {
+            arcGroups.data(getData(date)).append("path").attr("d", arcPath).attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
+            d3.select("arcID").remove();
+        }
 
         </script>
     </body>
