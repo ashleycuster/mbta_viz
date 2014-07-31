@@ -38,15 +38,17 @@ jsonData = list(defaultdict())
 #     json.dump(jsonData, fp)
 
 # num_people = [[time, num_people], [time, num_people], ...]
-num_entries = []
-num_exits = []
+
 
 for station in my_dict:
+    num_entries = []
+    num_exits = []
     for time in my_dict[station]:
         num_entries.append([ time, my_dict[station][time][0] ])
         num_exits.append([ time, my_dict[station][time][1] ])
-    jsonData.append({'station': station, 'direction': 'entry', 'num_people': num_entries})
-    jsonData.append({'station': station, 'direction': 'exit', 'num_people': num_exits})
+    jsonData.append({'station': station, 'direction': 'entry', 'num_people': sorted(num_entries)})
+    jsonData.append({'station': station, 'direction': 'exit', 'num_people': sorted(num_exits)})
 
-with open('hourly.json', 'wb') as fp:
+with open('allfeb_hourly.js', 'wb') as fp:
+    fp.write('var traffic_data = ')
     json.dump(jsonData, fp)
