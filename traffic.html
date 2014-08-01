@@ -6,12 +6,11 @@
     </head>
     <body>
         <h1>Hourly Entry and Exit Data</h1>
+
         <script type="text/javascript" src="/Users/ashleycuster/Desktop/mbta_viz/allfeb_hourly.js"></script>
         <script>
 
         var pi = Math.PI;
-
-        console.log(window.location.pathname);
 
         // var traffic_data = trafficData;
 
@@ -173,7 +172,7 @@
 
         // instead of appending path elements we append <g> each one moved to the x/y offset
         var arcGroups = svgContainer.selectAll("path")
-                                    .data(getData(2014020104))
+                                    .data(getData(1))
                                     .enter()
                                     .append("g")
                                     .attr("transform", function (d) {var station_in = d.station;
@@ -200,7 +199,7 @@
 
 
         svgContainer.transition()
-                    .duration(3000)
+                    .duration(30000)
                     .ease("linear")
                     .tween("date", tweenDate);
 
@@ -215,13 +214,19 @@
         }
 
         function getPeople(values, date) {
-            var i = bisect.left(values, date, 0, values.length - 1),
-                a = values[i];
+            // var i = bisect.left(values, date, 0, values.length - 1),
+            //     a = values[i];
+            // return a[1];
+            var index = Math.round(date);
+                a = values[index];
+            console.log(a);
+            console.log(index);
             return a[1];
         }
 
         function tweenDate() {
-            var date = d3.interpolateNumber(2014020104, 2014020123);
+            var upper_bound = dateMap.length - 1;
+            var date = d3.interpolateNumber(1, upper_bound);
             return function (t) { displayDate(date(t)); };
         }
 
