@@ -161,16 +161,22 @@
                                             .attr("width", 3000)
                                             .attr("height", 3000);
 
+        var label = svgContainer.append("text")
+                        .attr("class", "date label")
+                        .attr("text-anchor", "end")
+                        .attr("y", 1500)
+                        .attr("x", 0)
+                        .text("February 1 08:00");
 
-        var bisect = d3.bisector(function(d) {return d[0];});
+        // var bisect = d3.bisector(function(d) {return d[0];});
 
         var arcPath = d3.svg.arc()
                                 .innerRadius(2)
-                                .outerRadius(function (d) {return (d.num_people)/15;})
+                                .outerRadius(function (d) {return (d.num_people)/25;})
                                 .startAngle(function (d) {if (d.direction === 'entry') {return pi;} else {return 0;}})
                                 .endAngle(function (d) {if (d.direction === 'entry') {return 2*pi;} else {return pi;}});
 
-        // instead of appending path elements we append <g> each one moved to the x/y offset
+        // instead of appending path elements we append g each one moved to the x/y offset
         var arcGroups = svgContainer.selectAll("path")
                                     .data(getData(1))
                                     .enter()
@@ -203,6 +209,10 @@
                     .ease("linear")
                     .tween("date", tweenDate);
 
+
+
+        // functions!
+
         function getData(date) {
             return traffic_data.map(function(d) {
                 return {
@@ -231,9 +241,14 @@
         }
 
         function displayDate(date) {
+            // add something to remove previous elements
+            arcGroups.selectAll("path").remove();
+
             arcGroups.data(getData(date))
                         .append("path").attr("d", arcPath)
                         .attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
+
+
         }
 
         </script>
