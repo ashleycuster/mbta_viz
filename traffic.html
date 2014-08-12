@@ -188,10 +188,15 @@
             return Number.parseInt($("#frameSlider").val(), 10);
         }
 
-        $('#frameSlider').mousemove(function(event) {
-            var cur = getCurFrame();
-            displayDate(cur);
-            $('#timeLabel').text(displayLabel(cur));
+        $('#frameSlider').mousedown(function(event) {
+            $('#frameSlider').mousemove(function(event) {
+                var cur = getCurFrame();
+                displayDate(cur);
+                $('#timeLabel').text(displayLabel(cur));
+            });
+        });
+        $('#frameSlider').mouseup(function(event) {
+            $('#frameSlider').off('mousemove');
         });
 
         var timerId = null;
