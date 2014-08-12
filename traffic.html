@@ -15,14 +15,14 @@
     <body>
         <h1 id="headerMBTA">MBTA Station Entries and Exits</h1>
         <div>
-        <p id="timeLabel">Date</p>
+        <p id="timeLabel">Mon Feb 1 2014 05:00:00 GMT-0500 (EST)</p>
         </div>
         <div>
-        <input type="range" min="1" max="600" value="1" id="frameSlider">
+        <input type="range" min="1" max="690" value="1" id="frameSlider">
         <input type="button" value="play" id="playButton">
         </div>
 
-        <script type="text/javascript" src="./allfeb_hourly.js"></script>
+        <script type="text/javascript" src="./allfeb_hourly_v2.js"></script>
         <script>
 
         var pi = Math.PI;
@@ -34,8 +34,8 @@
                             "Central Square": {"y_axis": 727, "x_axis": 1359, "color": "red"},
                             "Kendall Square": {"y_axis": 817, "x_axis": 1450, "color": "red"},
                             "Charles MGH": {"y_axis": 931, "x_axis": 1565, "color": "red"},
-                            "Park Street": {"y_axis": 1006, "x_axis": 1637, "color": "red"},
-                            "Downtown Crossing": {"y_axis": 1115, "x_axis": 1748, "color": "red"},
+                            "Park Street": {"y_axis": 1006, "x_axis": 1637, "color": "black"},
+                            "Downtown Crossing": {"y_axis": 1115, "x_axis": 1748, "color": "black"},
                             "South Station": {"y_axis": 1197, "x_axis": 1828, "color": "red"},
                             "Broadway": {"y_axis": 1394, "x_axis": 1929, "color": "red"},
                             "Andrew Square": {"y_axis": 1513, "x_axis": 1930, "color": "red"},
@@ -51,7 +51,7 @@
                             "Braintree": {"y_axis": 2097, "x_axis": 2300, "color": "red"},
                             "Bowdoin": {"y_axis": 846, "x_axis": 1643, "color": "blue"},
                             "Government Center": {"y_axis": 922, "x_axis": 1717, "color": "blue"},
-                            "State Street": {"y_axis": 991, "x_axis": 1800, "color": "blue"},
+                            "State Street": {"y_axis": 991, "x_axis": 1800, "color": "black"},
                             "Aquarium": {"y_axis": 903, "x_axis": 1901, "color": "blue"},
                             "Maverick": {"y_axis": 754, "x_axis": 2053, "color": "blue"},
                             "Airport": {"y_axis": 698, "x_axis": 2106, "color": "blue"},
@@ -68,8 +68,8 @@
                             "Community College": {"y_axis": 536, "x_axis": 1800, "color": "orange"},
                             "North Station": {"y_axis": 710, "x_axis": 1800, "color": "orange"},
                             "Haymarket": {"y_axis": 842, "x_axis": 1800, "color": "orange"},
-                            "State Street": {"y_axis": 991, "x_axis": 1800, "color": "orange"},
-                            "Downtown Crossing": {"y_axis": 1114, "x_axis": 1748, "color": "orange"},
+                            "State Street": {"y_axis": 991, "x_axis": 1800, "color": "black"},
+                            "Downtown Crossing": {"y_axis": 1114, "x_axis": 1748, "color": "black"},
                             "Chinatown": {"y_axis": 1198, "x_axis": 1662, "color": "orange"},
                             "Tufts Medical Center": {"y_axis": 1346, "x_axis": 1516, "color": "orange"},
                             "Back Bay": {"y_axis": 1415, "x_axis": 1445, "color": "orange"},
@@ -186,7 +186,9 @@
         }
 
         $('#frameSlider').mousemove(function(event) {
-            displayDate(getCurFrame());
+            var cur = getCurFrame();
+            displayDate(cur);
+            $('#timeLabel').text(displayLabel(cur));
         });
 
         var timerId = null;
