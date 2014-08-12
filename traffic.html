@@ -5,21 +5,24 @@
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
         <style type="text/css">
-            #frameSlider { width: 600px; }
+            #frameSlider { width: 450px; }
             #playButton[value="play"] { color: green; }
             #playButton[value="pause"] { color: red; }
             #headerMBTA { font-family:helvetica; font-weight:normal; }
             #timeLabel { font-family:helvetica; font-weight:normal; }
         </style>
     </head>
+
     <body>
         <h1 id="headerMBTA">MBTA Station Entries and Exits</h1>
+
         <div>
-        <p id="timeLabel">Mon Feb 1 2014 05:00:00 GMT-0500 (EST)</p>
+            <p id="timeLabel">Mon Feb 1 2014 05:00:00 GMT-0500 (EST)</p>
         </div>
+
         <div>
-        <input type="range" min="1" max="690" value="1" id="frameSlider">
-        <input type="button" value="play" id="playButton">
+            <input type="image" src="./T_play.png" value="play" id="playButton">
+            <input type="range" min="1" max="690" value="1" id="frameSlider">
         </div>
 
         <script type="text/javascript" src="./allfeb_hourly_v2.js"></script>
@@ -101,7 +104,7 @@
                                     .append("g")
                                     .attr("transform", function (d) {var station_in = d.station;
                                                                         if (station_in in stationMap)
-                                                                            {var x_axis = stationMap[station_in]['x_axis']/4;
+                                                                            {var x_axis = stationMap[station_in]['x_axis']/4 - 180;
                                                                             var y_axis = stationMap[station_in]['y_axis']/4;
                                                                             return "translate(" + x_axis + "," + y_axis + ")";}
                                                                         // else {console.log(station_in)}
@@ -198,10 +201,12 @@
             if ($('#playButton').val() === "play") {
                 timerId = setInterval(displayNext, 100);
                 $('#playButton').val("pause");
+                $('#playButton').attr("src", "./T_pause.png");
             }
             else {
                 clearInterval(timerId);
                 $('#playButton').val("play");
+                $('#playButton').attr("src", "./T_play.png");
          }
         });
 
