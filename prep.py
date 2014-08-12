@@ -30,25 +30,43 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
 
 jsonData = list(defaultdict())
 
-# for station in my_dict:
-#     jsonData.append({'station': station, 'direction': 'entry', 'num_people': my_dict[station][20140201][0]})
-#     jsonData.append({'station': station, 'direction': 'exit', 'num_people': my_dict[station][20140201][1]})
-#
-# with open('feb1.json', 'wb') as fp:
-#     json.dump(jsonData, fp)
+# get all the times from one station, e.g. Park
+# use this list of times as times to append
+# in for loop, check for existance of time in my_dict[station]
+#    if present, do the same thing (append)
+#    else, append a made up value... but what? 0 for now, see how that looks
+
+time_list = []
+for time in my_dict["Park Street"]:
+    time_list.append(time)
+time_list.sort()
 
 # num_people = [[time, num_people], [time, num_people], ...]
-
 
 for station in my_dict:
     num_entries = []
     num_exits = []
-    for time in my_dict[station]:
-        num_entries.append([ time, my_dict[station][time][0] ])
-        num_exits.append([ time, my_dict[station][time][1] ])
+    for time in time_list:
+        if time in my_dict[station]:
+            entry = my_dict[station][time][0]
+            exit = my_dict[station][time][1]
+        else:
+            entry = 0
+            exit = 0
+        num_entries.append([ time, entry ])
+        num_exits.append([ time, exit ])
     jsonData.append({'station': station, 'direction': 'entry', 'num_people': sorted(num_entries)})
     jsonData.append({'station': station, 'direction': 'exit', 'num_people': sorted(num_exits)})
 
-with open('allfeb_hourly.js', 'wb') as fp:
+# for station in my_dict:
+#     num_entries = []
+#     num_exits = []
+#     for time in my_dict[station]:
+#         num_entries.append([ time, my_dict[station][time][0] ])
+#         num_exits.append([ time, my_dict[station][time][1] ])
+#     jsonData.append({'station': station, 'direction': 'entry', 'num_people': sorted(num_entries)})
+#     jsonData.append({'station': station, 'direction': 'exit', 'num_people': sorted(num_exits)})
+
+with open('allfeb_hourly_v2.js', 'wb') as fp:
     fp.write('var traffic_data = ')
     json.dump(jsonData, fp)
