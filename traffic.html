@@ -2,10 +2,13 @@
 <html>
     <head>
         <title>MBTA Station Traffic</title>
+
         <link rel="shortcut icon" href="./T_logo.ico" type="image/x-icon">
         <link rel="icon" href="./T_logo.ico" type="image/x-icon">
+
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
         <style type="text/css">
             #frameSlider { width: 450px; }
             #playButton[value="play"] { color: green; }
@@ -13,6 +16,7 @@
             #headerMBTA { font-family:helvetica; font-weight:normal; }
             #timeLabel { font-family:helvetica; font-weight:normal; }
         </style>
+
     </head>
 
     <body>
@@ -28,6 +32,7 @@
         </div>
 
         <script type="text/javascript" src="./allfeb_hourly_v2.js"></script>
+
         <script>
 
         var pi = Math.PI;
@@ -89,47 +94,55 @@
                             "World Trade Center": {"y_axis": 1197, "x_axis": 2004, "color": "silver"}
                         };
 
+
+        // Accessor functions
+        function radius(d) {return (d.num_people)/100;}
+        function angleStart(d) {if (d.direction === 'entry') {return pi;} else {return 0;}}
+        function angleEnd(d) {if (d.direction === 'entry') {return 2*pi;} else {return pi;}}
+        function color(d) {if (d.station in stationMap) {return stationMap[d.station]['color'];}
+                            else {return 'white';}}
+
+
+        // SVG container to hold graphic
         var svgContainer = d3.select("body").append("svg")
                                             .attr("width", 750)
                                             .attr("height", 600);
 
+        // Draws arcs
         var arcPath = d3.svg.arc()
                                 .innerRadius(2)
-                                .outerRadius(function (d) {return (d.num_people)/100;})
-                                .startAngle(function (d) {if (d.direction === 'entry') {return pi;} else {return 0;}})
-                                .endAngle(function (d) {if (d.direction === 'entry') {return 2*pi;} else {return pi;}});
+                                .outerRadius(function (d) {return radius(d);})
+                                .startAngle(function (d) {return angleStart(d);})
+                                .endAngle(function (d) {return angleEnd(d);});
 
-        // instead of appending path elements we append g each one moved to the x/y offset
+
+        // Set up group of arcs for appending
         var arcGroups = svgContainer.selectAll("path")
                                     .data(getData(1))
                                     .enter()
                                     .append("g")
-                                    .attr("transform", function (d) {var station_in = d.station;
-                                                                        if (station_in in stationMap)
-                                                                            {var x_axis = stationMap[station_in]['x_axis']/4 - 180;
-                                                                            var y_axis = stationMap[station_in]['y_axis']/4;
-                                                                            return "translate(" + x_axis + "," + y_axis + ")";}
-                                                                        // else {console.log(station_in)}
-                                                                    })
+                                    .attr("transform", function (d) {
+                                        var station_in = d.station;
+                                        if (station_in in stationMap) {
+                                            var x_axis = stationMap[station_in]['x_axis']/4 - 180;
+                                            var y_axis = stationMap[station_in]['y_axis']/4;
+                                            return "translate(" + x_axis + "," + y_axis + ")";}})
                                     .attr("id", "arcID");
 
 
-        // and to each group we append the left & right arc
+        // Append the left & right arc
         arcGroups.append("path")
                 .attr("d", arcPath)
-                .attr("fill",
-                        function (d) {if (d.station in stationMap)
-                                        {return stationMap[d.station]['color']}
-                                    else
-                                        {return 'white'}});
+                .attr("fill", function (d) {return color(d);});
 
-        // show station names with mouseover
+
+        // Show station names with mouseover
         arcGroups.append("svg:title").text(function (d) { return d.station; });
 
 
 
 
-        // functions!
+        // Functions to get correct data
 
         function displayLabel(index) {
             var dateNum = traffic_data[0]["num_people"][index][0];
@@ -138,7 +151,6 @@
             var month = parseInt(dateString.substring(4,6), 10) - 1;
             var day = parseInt(dateString.substring(6,8), 10);
             var hour = parseInt(dateString.substring(8,10), 10);
-            // var numArrary = JSON.parse("[" + dateString.substring(0,4) + "," + dateString.substring(4,6) + "," + dateString.substring(6,8) + "," + dateString.substring(8,10) + "]")
             var dateDatetime = new Date(year, month, day, hour);
             return dateDatetime;
         }
@@ -159,36 +171,30 @@
             return a[1];
         }
 
-        function tweenDate() {
-            var upper_bound = 661;
-            var date = d3.interpolateNumber(1, upper_bound);
-            return function (t) { displayDate(date(t)); };
-        }
-
         function displayDate(date) {
-            // add something to remove previous elements
             arcGroups.selectAll("path").remove();
-
             arcGroups.data(getData(date))
                         .append("path").attr("d", arcPath)
                         .attr("fill", function (d) {if (d.station in stationMap) {return stationMap[d.station]['color']} else {return 'white'}});
-
-
         }
 
-        function displayNext()
-        {
+        function displayNext() {
             var cur = getCurFrame();
             cur = cur + 1;
             $('#frameSlider').val(cur);
             displayDate(cur);
-            // displayLabel(cur);
             $('#timeLabel').text(displayLabel(cur));
         }
 
         function getCurFrame() {
             return Number.parseInt($("#frameSlider").val(), 10);
         }
+
+
+
+        // JQuery button and slider actions
+
+        var timerId = null;
 
         $('#frameSlider').mousedown(function(event) {
             $('#frameSlider').mousemove(function(event) {
@@ -197,11 +203,12 @@
                 $('#timeLabel').text(displayLabel(cur));
             });
         });
+
+
         $('#frameSlider').mouseup(function(event) {
             $('#frameSlider').off('mousemove');
         });
 
-        var timerId = null;
 
         $('#playButton').click(function(event) {
 
