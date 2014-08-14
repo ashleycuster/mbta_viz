@@ -1,3 +1,5 @@
+# Creates data file 'allfeb_hourly_v2.js' to be used in traffic.html data visualization
+
 from __future__ import print_function
 from pprint import pprint
 from collections import defaultdict, OrderedDict
@@ -31,10 +33,6 @@ for row in list(csv.reader(open("/Users/ashleycuster/Desktop/StationCountsByMinu
 jsonData = list(defaultdict())
 
 # get all the times from one station, e.g. Park
-# use this list of times as times to append
-# in for loop, check for existance of time in my_dict[station]
-#    if present, do the same thing (append)
-#    else, append a made up value... but what? 0 for now, see how that looks
 
 time_list = []
 for time in my_dict["Park Street"]:
@@ -42,6 +40,8 @@ for time in my_dict["Park Street"]:
 time_list.sort()
 
 # num_people = [[time, num_people], [time, num_people], ...]
+
+# reformat data structure for file
 
 for station in my_dict:
     num_entries = []
@@ -58,14 +58,8 @@ for station in my_dict:
     jsonData.append({'station': station, 'direction': 'entry', 'num_people': sorted(num_entries)})
     jsonData.append({'station': station, 'direction': 'exit', 'num_people': sorted(num_exits)})
 
-# for station in my_dict:
-#     num_entries = []
-#     num_exits = []
-#     for time in my_dict[station]:
-#         num_entries.append([ time, my_dict[station][time][0] ])
-#         num_exits.append([ time, my_dict[station][time][1] ])
-#     jsonData.append({'station': station, 'direction': 'entry', 'num_people': sorted(num_entries)})
-#     jsonData.append({'station': station, 'direction': 'exit', 'num_people': sorted(num_exits)})
+
+# write to file 
 
 with open('allfeb_hourly_v2.js', 'wb') as fp:
     fp.write('var traffic_data = ')
