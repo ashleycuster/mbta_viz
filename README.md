@@ -7,7 +7,7 @@ Dynamic visualization of passenger entries and exits into MBTA red, orange, and 
 
 #### Current viewing instructions
 
-1. Click on site link: http://ashleycuster.github.io/mbta_viz/ 
+1. Click on site link: http://ashleycuster.github.io/mbta_viz/
 1. Press the T logo to play and pause the animation, or drag your mouse along the slider for more control.
 
 
@@ -17,4 +17,4 @@ The left side of the circles represent the number of passengers who entered the 
 #### Work in progress
 
 1. Fix time zone in time display
-2. Safari and IE compatibility
+2. IE compatibility
